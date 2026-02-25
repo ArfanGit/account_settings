@@ -7,11 +7,24 @@ import {
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import * as fs from 'fs';
+import * as path from 'path';
 
 async function bootstrap() {
-  // Debug: Log environment variables (Railway diagnosis)
+  // Debug: Check if .env.production exists and log its contents (Railway diagnosis)
   // eslint-disable-next-line no-console
   console.log('=== Environment Variables Debug ===');
+  const envProdPath = path.join(process.cwd(), '.env.production');
+  // eslint-disable-next-line no-console
+  console.log('Current working directory:', process.cwd());
+  // eslint-disable-next-line no-console
+  console.log('.env.production path:', envProdPath);
+  // eslint-disable-next-line no-console
+  console.log('.env.production exists:', fs.existsSync(envProdPath));
+  if (fs.existsSync(envProdPath)) {
+    // eslint-disable-next-line no-console
+    console.log('.env.production content (first 100 chars):', fs.readFileSync(envProdPath, 'utf8').substring(0, 100));
+  }
   // eslint-disable-next-line no-console
   console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'SET (hidden)' : 'UNDEFINED');
   // eslint-disable-next-line no-console
