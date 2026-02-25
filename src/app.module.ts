@@ -10,6 +10,8 @@ import { VotesModule } from './votes/votes.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      // Load env vars from a production file (for Railway) and override with local .env when present
+      envFilePath: ['.env.production', '.env'],
     }),
     UsersModule,
     AuthModule,
