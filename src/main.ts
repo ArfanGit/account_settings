@@ -1,4 +1,27 @@
 import 'reflect-metadata';
+// Load .env.production FIRST, before anything else (for Railway deployment)
+import * as fs from 'fs';
+import * as path from 'path';
+
+// Manually load .env.production if it exists
+const envProdPath = path.join(process.cwd(), '.env.production');
+if (fs.existsSync(envProdPath)) {
+  const envContent = fs.readFileSync(envProdPath, 'utf8');
+  envContent.split('\n').forEach((line) => {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith('#')) {
+      const [key, ...valueParts] = trimmed.split('=');
+      if (key && valueParts.length > 0) {
+        const value = valueParts.join('=').replace(/^["']|["']$/g, ''); // Remove quotes
+        if (!process.env[key]) {
+          // Only set if not already set (allows Railway env vars to override)
+          process.env[key] = value;
+        }
+      }
+    }
+  });
+}
+
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
@@ -7,8 +30,6 @@ import {
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import * as fs from 'fs';
-import * as path from 'path';
 
 async function bootstrap() {
   // Debug: Check if .env.production exists and log its contents (Railway diagnosis)
