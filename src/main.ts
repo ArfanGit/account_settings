@@ -22,7 +22,13 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors();
+  // CORS configuration for frontend integration
+  app.enableCors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
 
   // Swagger/OpenAPI configuration
   const config = new DocumentBuilder()
@@ -51,11 +57,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(8002, '0.0.0.0');
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 8002;
+
+  await app.listen(port, '0.0.0.0');
   // eslint-disable-next-line no-console
-  console.log('Nest Fastify API running at http://localhost:8002');
+  console.log(`Nest Fastify API running at http://localhost:${port}`);
   // eslint-disable-next-line no-console
-  console.log('Swagger docs available at http://localhost:8002/api/docs');
+  console.log(`Swagger docs available at http://localhost:${port}/api/docs`);
 }
 
 bootstrap();
