@@ -9,6 +9,22 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  // Debug: Log environment variables (Railway diagnosis)
+  // eslint-disable-next-line no-console
+  console.log('=== Environment Variables Debug ===');
+  // eslint-disable-next-line no-console
+  console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'SET (hidden)' : 'UNDEFINED');
+  // eslint-disable-next-line no-console
+  console.log('PORT:', process.env.PORT);
+  // eslint-disable-next-line no-console
+  console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'SET (hidden)' : 'UNDEFINED');
+  // eslint-disable-next-line no-console
+  console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
+  // eslint-disable-next-line no-console
+  console.log('All env keys:', Object.keys(process.env).filter(k => k.includes('DATABASE') || k.includes('RAILWAY')).join(', '));
+  // eslint-disable-next-line no-console
+  console.log('===================================');
+
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
