@@ -1,27 +1,4 @@
 import 'reflect-metadata';
-// Load .env.production FIRST, before anything else (for Railway deployment)
-import * as fs from 'fs';
-import * as path from 'path';
-
-// Manually load .env.production if it exists
-const envProdPath = path.join(process.cwd(), '.env.production');
-if (fs.existsSync(envProdPath)) {
-  const envContent = fs.readFileSync(envProdPath, 'utf8');
-  envContent.split('\n').forEach((line) => {
-    const trimmed = line.trim();
-    if (trimmed && !trimmed.startsWith('#')) {
-      const [key, ...valueParts] = trimmed.split('=');
-      if (key && valueParts.length > 0) {
-        const value = valueParts.join('=').replace(/^["']|["']$/g, ''); // Remove quotes
-        if (!process.env[key]) {
-          // Only set if not already set (allows Railway env vars to override)
-          process.env[key] = value;
-        }
-      }
-    }
-  });
-}
-
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
@@ -32,32 +9,13 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  // Debug: Check if .env.production exists and log its contents (Railway diagnosis)
+  // Simple env check for Railway
   // eslint-disable-next-line no-console
-  console.log('=== Environment Variables Debug ===');
-  const envProdPath = path.join(process.cwd(), '.env.production');
+  console.log('Starting app... PORT:', process.env.PORT || '8002');
   // eslint-disable-next-line no-console
-  console.log('Current working directory:', process.cwd());
+  console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'SET' : 'MISSING');
   // eslint-disable-next-line no-console
-  console.log('.env.production path:', envProdPath);
-  // eslint-disable-next-line no-console
-  console.log('.env.production exists:', fs.existsSync(envProdPath));
-  if (fs.existsSync(envProdPath)) {
-    // eslint-disable-next-line no-console
-    console.log('.env.production content (first 100 chars):', fs.readFileSync(envProdPath, 'utf8').substring(0, 100));
-  }
-  // eslint-disable-next-line no-console
-  console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'SET (hidden)' : 'UNDEFINED');
-  // eslint-disable-next-line no-console
-  console.log('PORT:', process.env.PORT);
-  // eslint-disable-next-line no-console
-  console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'SET (hidden)' : 'UNDEFINED');
-  // eslint-disable-next-line no-console
-  console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
-  // eslint-disable-next-line no-console
-  console.log('All env keys:', Object.keys(process.env).filter(k => k.includes('DATABASE') || k.includes('RAILWAY')).join(', '));
-  // eslint-disable-next-line no-console
-  console.log('===================================');
+  console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'SET' : 'MISSING');
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
