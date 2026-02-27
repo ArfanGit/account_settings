@@ -13,5 +13,7 @@ COPY . .
 
 RUN npm run build
 
-CMD ["node", "dist/main.js"]
+# Run Prisma migrations on startup before starting the app.
+# This ensures the Railway Postgres database has all tables/indexes.
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
 
