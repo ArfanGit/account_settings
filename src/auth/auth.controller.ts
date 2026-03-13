@@ -6,11 +6,12 @@ import { LoginDto } from './dto/login.dto';
 import { TokenResponseDto } from './dto/token-response.dto';
 
 @ApiTags('auth')
-@Controller('login')
+@Controller('')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
+  // Primary login route: POST /api/login
+  @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login with email and password' })
   @ApiBody({
@@ -58,5 +59,13 @@ export class AuthController {
     }
 
     return this.authService.login({ email, password } as LoginDto);
+  }
+
+  // Compatibility route for existing frontend: POST /api/auth/login
+  // Delegates to the same login handler
+  @Post('auth/login')
+  @HttpCode(HttpStatus.OK)
+  async loginAuthPath(@Req() req: FastifyRequest): Promise<TokenResponseDto> {
+    return this.login(req);
   }
 }
