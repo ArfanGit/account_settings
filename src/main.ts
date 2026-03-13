@@ -22,6 +22,9 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
 
+  // Keep API routes under /api to match frontend expectations
+  app.setGlobalPrefix('api');
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -32,10 +35,13 @@ async function bootstrap() {
 
   // CORS configuration for frontend integration
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    origin: [
+      'http://localhost:3000',
+      'https://zip1-dark-hruva6alh-rhidzs-projects.vercel.app', // Vercel frontend
+    ],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   });
 
   // Swagger/OpenAPI configuration
