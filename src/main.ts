@@ -37,7 +37,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:3000',
-      'https://zip1-dark-hruva6alh-rhidzs-projects.vercel.app', // Vercel frontend
+      'https://zipli-dark-hruva6a1h-rhidzs-projects.vercel.app', // Vercel frontend
     ],
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
